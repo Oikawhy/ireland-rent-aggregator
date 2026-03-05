@@ -1,0 +1,36 @@
+# AGPARS - Irish Rental Listings Aggregator
+# Core dependencies (sync with pyproject.toml)
+
+# Database
+sqlalchemy>=2.0
+alembic>=1.13
+psycopg2-binary>=2.9
+
+# Cache & Queue
+redis>=5.0
+
+# Scraping
+playwright>=1.40
+selenium>=4.15.0
+undetected-chromedriver>=3.5.0
+setuptools>=69.0  # provides distutils for Python 3.12+ (needed by UC driver)
+
+# Telegram
+python-telegram-bot>=21.0
+
+# Validation & Config
+pydantic>=2.5
+pydantic-settings>=2.1
+
+# HTTP Client
+httpx>=0.26
+
+# Logging & Metrics
+structlog>=24.1
+prometheus-client>=0.19
+
+# Data Processing
+openpyxl>=3.1
+
+# Development (install with: pip install -r requirements.txt -r requirements-dev.txt)
+# See requirements-dev.txt for dev dependencies

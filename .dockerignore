@@ -1,0 +1,42 @@
+# AGPARS Docker ignore
+.git
+.gitignore
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.egg-info
+.pytest_cache
+.mypy_cache
+.ruff_cache
+
+# Tests & docs (not needed in prod image)
+tests/
+docs/
+*.md
+!requirements.txt
+
+# IDE
+.vscode/
+.idea/
+.agent/
+
+# Infra (don't copy compose/ansible into the image)
+infra/
+
+# Env files (secrets – injected at runtime)
+.env
+.env.*
+
+# Dev scripts
+scripts/test_*
+scripts/insert_*
+scripts/import_*
+
+# Misc
+*.log
+*.bak
+*.deb
+
+# Local data
+services/collector/.browser_data

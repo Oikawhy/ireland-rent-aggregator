@@ -1,0 +1,77 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# AGPARS Prometheus Configuration
+# ═══════════════════════════════════════════════════════════════════════════════
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+# Alertmanager integration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ["alertmanager:9093"]
+
+# Alert rules
+rule_files:
+  - "rules/*.yml"
+
+# Scrape targets
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # AGPARS application services
+  # Each service exposes /metrics on port 8000
+  - job_name: "agpars-bot"
+    static_configs:
+      - targets: ["bot:8000"]
+    scrape_interval: 30s
+
+  - job_name: "agpars-notifier"
+    static_configs:
+      - targets: ["notifier:8000"]
+    scrape_interval: 30s
+
+  - job_name: "agpars-publisher"
+    static_configs:
+      - targets: ["publisher:8000"]
+    scrape_interval: 30s
+
+  - job_name: "agpars-normalizer"
+    static_configs:
+      - targets: ["normalizer:8000"]
+    scrape_interval: 30s
+
+  - job_name: "agpars-dedup"
+    static_configs:
+      - targets: ["dedup:8000"]
+    scrape_interval: 60s
+
+  - job_name: "agpars-maintenance"
+    static_configs:
+      - targets: ["maintenance:8000"]
+    scrape_interval: 60s
+
+  - job_name: "agpars-scheduler"
+    static_configs:
+      - targets: ["scheduler:8000"]
+    scrape_interval: 30s
+
+  - job_name: "agpars-collector"
+    static_configs:
+      # Collector runs on host network (for Cloudflare cookie compatibility)
+      - targets: ["host.docker.internal:8010"]
+    scrape_interval: 30s
+
+  # Redis metrics (via redis_exporter, optional)
+  # - job_name: "redis"
+  #   static_configs:
+  #     - targets: ["redis-exporter:9121"]
+
+  # PostgreSQL metrics (via postgres_exporter, optional)
+  # - job_name: "postgres"
+  #   static_configs:
+  #     - targets: ["postgres-exporter:9187"]

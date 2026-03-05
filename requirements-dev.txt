@@ -1,0 +1,14 @@
+# AGPARS - Development Dependencies
+
+# Testing
+pytest>=8.0
+pytest-cov>=4.1
+pytest-asyncio>=0.23
+
+# Linting & Formatting
+ruff>=0.2
+mypy>=1.8
+black>=24.1
+
+# Git Hooks
+pre-commit>=3.6

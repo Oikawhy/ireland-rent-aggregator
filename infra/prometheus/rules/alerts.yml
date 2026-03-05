@@ -1,0 +1,86 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# AGPARS Alert Rules
+# ═══════════════════════════════════════════════════════════════════════════════
+
+groups:
+  - name: agpars_pipeline
+    rules:
+      # ── Service Down ──────────────────────────────────────────────────────
+      - alert: ServiceDown
+        expr: up{job=~"agpars-.*"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "{{ $labels.job }} has been unreachable for 5 minutes."
+
+      # ── Circuit breaker ────────────────────────────────────────────────────
+      - alert: CircuitBreakerOpen
+        expr: circuit_breaker_state == 2
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Circuit breaker OPEN for {{ $labels.source }}"
+          description: "Source {{ $labels.source }} circuit breaker has been open for 1+ minute."
+
+      # ── Outbox backlog ─────────────────────────────────────────────────────
+      - alert: OutboxBacklog
+        expr: outbox_pending > 100
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Outbox backlog growing"
+          description: "{{ $value }} pending messages in outbox for 10+ minutes."
+
+      # ── Queue Depth High ───────────────────────────────────────────────────
+      - alert: QueueDepthHigh
+        expr: crawl_queue_depth > 1000 or retry_queue_depth > 500
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Queue depth critical"
+          description: "Crawl queue: {{ $value }} (limit 1000) or Retry queue: {{ $value }} (limit 500)."
+
+      # ── High delivery failure rate ─────────────────────────────────────────
+      - alert: HighDeliveryFailureRate
+        expr: rate(outbox_delivery_attempts_total{result="failure"}[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High delivery failure rate"
+          description: "Delivery failure rate is {{ $value }}/s."
+
+      # ── No scrape jobs in 30 hours ─────────────────────────────────────────
+      - alert: NoScrapeJobs
+        expr: increase(scrape_jobs_total[30h]) == 0
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: "No scrape jobs in 30 hours"
+          description: "The pipeline has not executed any scrape jobs."
+
+      # ── Publisher lag too high ──────────────────────────────────────────────
+      - alert: PublisherLagHigh
+        expr: publisher_lag_seconds > 300
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Publisher sync lag exceeds 5 minutes"
+          description: "Publisher lag is {{ $value }} seconds."
+
+      # ── Telegram rate limiting ─────────────────────────────────────────────
+      - alert: TelegramRateLimited
+        expr: rate(telegram_rate_limited_total[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Telegram API rate limiting active"
+          description: "Rate: {{ $value }}/s for 5+ minutes."

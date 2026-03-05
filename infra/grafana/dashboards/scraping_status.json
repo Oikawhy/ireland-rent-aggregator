@@ -1,0 +1,445 @@
+{
+    "annotations": {
+        "list": []
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 1,
+    "id": null,
+    "links": [],
+    "panels": [
+        {
+            "title": "🔄 Scraping Status by Source",
+            "description": "Live view of scraping jobs: last run time, status, duration, and listing counts per source.",
+            "type": "table",
+            "gridPos": {
+                "h": 10,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            },
+            "targets": [
+                {
+                    "expr": "sum by (source) (scrape_jobs_total{status=\"success\"})",
+                    "legendFormat": "{{ source }}",
+                    "format": "table",
+                    "instant": true,
+                    "refId": "A"
+                }
+            ],
+            "transformations": [
+                {
+                    "id": "organize",
+                    "options": {
+                        "excludeByName": {
+                            "Time": false,
+                            "__name__": true,
+                            "instance": true,
+                            "job": true,
+                            "status": true
+                        },
+                        "renameByName": {
+                            "source": "Source",
+                            "Value": "Successful Jobs"
+                        },
+                        "indexByName": {
+                            "source": 0,
+                            "Value": 1
+                        }
+                    }
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "align": "center"
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Source"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 150
+                            }
+                        ]
+                    }
+                ]
+            },
+            "options": {
+                "showHeader": true,
+                "sortBy": [
+                    {
+                        "displayName": "Source",
+                        "desc": false
+                    }
+                ]
+            }
+        },
+        {
+            "title": "📊 Listings Found per Source (Last Cycle)",
+            "description": "Number of raw listings found by each source in the last scrape cycle.",
+            "type": "bargauge",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 10
+            },
+            "targets": [
+                {
+                    "expr": "sum by (source) (increase(listings_found_total[4h]))",
+                    "legendFormat": "{{ source }}",
+                    "instant": true
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "thresholds": {
+                        "steps": [
+                            {
+                                "color": "blue",
+                                "value": null
+                            },
+                            {
+                                "color": "green",
+                                "value": 100
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 500
+                            },
+                            {
+                                "color": "red",
+                                "value": 2000
+                            }
+                        ]
+                    }
+                }
+            },
+            "options": {
+                "orientation": "horizontal",
+                "displayMode": "gradient",
+                "showUnfilled": true
+            }
+        },
+        {
+            "title": "⏱ Scrape Duration (Last Run)",
+            "description": "How long the last scrape took per source.",
+            "type": "bargauge",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 10
+            },
+            "targets": [
+                {
+                    "expr": "sum by (source) (scrape_duration_seconds_sum) / sum by (source) (scrape_duration_seconds_count)",
+                    "legendFormat": "{{ source }}",
+                    "instant": true
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "s",
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "thresholds": {
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 120
+                            },
+                            {
+                                "color": "red",
+                                "value": 600
+                            }
+                        ]
+                    }
+                }
+            },
+            "options": {
+                "orientation": "horizontal",
+                "displayMode": "gradient",
+                "showUnfilled": true
+            }
+        },
+        {
+            "title": "✅ Success vs ❌ Failure by Source",
+            "description": "Number of successful vs failed scrape jobs per source.",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 18
+            },
+            "targets": [
+                {
+                    "expr": "sum by (source) (increase(scrape_jobs_total{status=\"success\"}[1h]))",
+                    "legendFormat": "✅ {{ source }}",
+                    "refId": "A"
+                },
+                {
+                    "expr": "sum by (source) (increase(scrape_jobs_total{status=\"failure\"}[1h]))",
+                    "legendFormat": "❌ {{ source }}",
+                    "refId": "B"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "fillOpacity": 20,
+                        "lineWidth": 2,
+                        "pointSize": 5,
+                        "showPoints": "auto"
+                    }
+                }
+            }
+        },
+        {
+            "title": "📈 Listings Found Over Time",
+            "description": "Rate of raw listings being discovered per source.",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 18
+            },
+            "targets": [
+                {
+                    "expr": "sum by (source, city) (increase(listings_found_total[30m]))",
+                    "legendFormat": "{{ source }}",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "fillOpacity": 30,
+                        "lineWidth": 2,
+                        "stacking": {
+                            "mode": "normal"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "title": "🔥 Scrape Errors by Source",
+            "description": "Scrape errors broken down by source and reason.",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 26
+            },
+            "targets": [
+                {
+                    "expr": "sum by (source, reason) (increase(scrape_errors_total[1h]))",
+                    "legendFormat": "{{ source }} ({{ reason }})",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "fillOpacity": 10,
+                        "lineWidth": 2
+                    },
+                    "color": {
+                        "mode": "palette-classic"
+                    }
+                }
+            }
+        },
+        {
+            "title": "🔌 Circuit Breaker States",
+            "description": "Current circuit breaker state per source. CLOSED=OK, HALF_OPEN=testing, OPEN=blocked.",
+            "type": "stat",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 26
+            },
+            "targets": [
+                {
+                    "expr": "max by (source) (circuit_breaker_state)",
+                    "legendFormat": "{{ source }}",
+                    "instant": true
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "mappings": [
+                        {
+                            "type": "value",
+                            "options": {
+                                "0": {
+                                    "text": "✅ CLOSED",
+                                    "color": "green"
+                                },
+                                "1": {
+                                    "text": "⚠️ HALF_OPEN",
+                                    "color": "yellow"
+                                },
+                                "2": {
+                                    "text": "🛑 OPEN",
+                                    "color": "red"
+                                }
+                            }
+                        }
+                    ],
+                    "thresholds": {
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 1
+                            },
+                            {
+                                "color": "red",
+                                "value": 2
+                            }
+                        ]
+                    }
+                }
+            },
+            "options": {
+                "colorMode": "background",
+                "graphMode": "none",
+                "textMode": "value_and_name",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                }
+            }
+        },
+        {
+            "title": "🕐 Next Scrape Cycle",
+            "description": "Date and time of the next scheduled scrape cycle.",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 12,
+                "x": 12,
+                "y": 34
+            },
+            "targets": [
+                {
+                    "expr": "max(scheduler_next_run_timestamp > 0) or vector(0)",
+                    "legendFormat": "Next Run",
+                    "instant": true
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "dateTimeAsLocal",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "text"
+                    },
+                    "thresholds": {
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    }
+                }
+            },
+            "options": {
+                "colorMode": "none",
+                "graphMode": "none",
+                "textMode": "value",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                }
+            }
+        },
+        {
+            "title": "📋 Parse Failures by Field",
+            "description": "Field-level extraction failures during scraping.",
+            "type": "table",
+            "gridPos": {
+                "h": 8,
+                "w": 24,
+                "x": 0,
+                "y": 34
+            },
+            "targets": [
+                {
+                    "expr": "sum by (source, field) (parse_failures_total)",
+                    "legendFormat": "{{ source }} / {{ field }}",
+                    "format": "table",
+                    "instant": true,
+                    "refId": "A"
+                }
+            ],
+            "transformations": [
+                {
+                    "id": "organize",
+                    "options": {
+                        "excludeByName": {
+                            "__name__": true,
+                            "instance": true,
+                            "job": true
+                        },
+                        "renameByName": {
+                            "source": "Source",
+                            "field": "Field",
+                            "Value": "Failures"
+                        }
+                    }
+                }
+            ],
+            "options": {
+                "showHeader": true,
+                "sortBy": [
+                    {
+                        "displayName": "Failures",
+                        "desc": true
+                    }
+                ]
+            }
+        }
+    ],
+    "schemaVersion": 39,
+    "tags": [
+        "agpars",
+        "scraping"
+    ],
+    "templating": {
+        "list": []
+    },
+    "time": {
+        "from": "now-6h",
+        "to": "now"
+    },
+    "refresh": "30s",
+    "title": "AGPARS Scraping Status",
+    "uid": "agpars-scraping-status"
+}

@@ -1,0 +1,173 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# Environment & Secrets
+.env
+.env.*
+!.env.prod.example
+*.pem
+*.key
+secrets/
+credentials/
+
+# SSH keys
+gitlab_ci_ed25519
+gitlab_ci_ed25519.pub
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Testing
+.coverage
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+.cache/
+
+# MyPy / Type Checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Ruff
+.ruff_cache/
+
+# Database
+*.db
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# Docker
+.docker/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Zone Identifier files (Windows/WSL)
+*Zone.Identifier
+
+# Compiled
+*.pyc
+*.pyo
+*.pyd
+
+# Local development
+local/
+tmp/
+temp/
+
+# Browser data
+services/collector/.browser_data/
+
+# Large binary files
+*.deb
+
+# Database backups
+backups/
+
+# Reference materials (screenshots, notes)
+REF/
+
+# AI agent config
+.agent/
+GEMINI.md
+AGENT_FLOW.md
+ARCHITECT.md
+ralph_instructions.md
+tasks.md
+
+# Planning docs
+001-rental-listings-aggregator/
+
+# Scripts — only keep cookie login scripts and db init
+scripts/backup/
+scripts/ci/
+scripts/migrations/
+scripts/check_data_source.py
+scripts/check_outbox.py
+scripts/cluster_and_diagnose.py
+scripts/debug_notifier.sh
+scripts/diagnose_pipeline.py
+scripts/enqueue_property_test.py
+scripts/enqueue_uc_test.py
+scripts/import_cities.py
+scripts/insert_more_data.py
+scripts/insert_test_data.py
+scripts/migrate_favorites.py
+scripts/migrate_hidden_listings.py
+scripts/pg_backup.sh
+scripts/property_cookies.json
+scripts/renormalize_all.py
+scripts/rerun_dedup.py
+scripts/run_pipeline.py
+scripts/setup_subscriptions.py
+scripts/solve_daft_captcha.py
+scripts/start_all.sh
+scripts/test_all_sites.py
+scripts/test_bot_imports.py
+scripts/test_db_check.sh
+scripts/test_instant.sh
+scripts/test_notifier_setup.sh
+
+# Docs
+docs/
+
+# Debug / scratch scripts at root
+analyze_daft.py
+demo_parser.py
+test_daft.py
+test_daft_debug.py
+test_imports.py
+test_parser.py
+verify_adapters.py
+verify_config.py
+fix_pg_auth.sh
+auth_recovery.md
+city.xlsx
+
+# GitLab CI
+.gitlab-ci.yml
+
+# This script
+github_push.sh

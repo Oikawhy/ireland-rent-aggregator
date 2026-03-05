@@ -1,0 +1,321 @@
+{
+    "annotations": {
+        "list": []
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 1,
+    "id": null,
+    "links": [],
+    "panels": [
+        {
+            "title": "Services Up / Down",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 8,
+                "x": 0,
+                "y": 0
+            },
+            "targets": [
+                {
+                    "expr": "count(up{job=~\"agpars-.*\"} == 1)",
+                    "legendFormat": "Up"
+                },
+                {
+                    "expr": "count(up{job=~\"agpars-.*\"} == 0) or on() vector(0)",
+                    "legendFormat": "Down"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "thresholds": {
+                        "steps": [
+                            {
+                                "color": "red",
+                                "value": null
+                            },
+                            {
+                                "color": "green",
+                                "value": 1
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "title": "Publisher Lag",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 8,
+                "x": 8,
+                "y": 0
+            },
+            "targets": [
+                {
+                    "expr": "publisher_lag_seconds",
+                    "legendFormat": "Lag (s)"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "s",
+                    "thresholds": {
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 60
+                            },
+                            {
+                                "color": "red",
+                                "value": 300
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "title": "Queue Depths",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 8,
+                "x": 16,
+                "y": 0
+            },
+            "targets": [
+                {
+                    "expr": "crawl_queue_depth",
+                    "legendFormat": "Crawl Queue"
+                },
+                {
+                    "expr": "retry_queue_depth",
+                    "legendFormat": "Retry Queue"
+                },
+                {
+                    "expr": "outbox_pending",
+                    "legendFormat": "Outbox Pending"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "thresholds": {
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 100
+                            },
+                            {
+                                "color": "red",
+                                "value": 1000
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "title": "Scrape Jobs (rate/5m)",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 4
+            },
+            "targets": [
+                {
+                    "expr": "sum by (source) (rate(scrape_jobs_total{status=\"success\"}[5m]))",
+                    "legendFormat": "{{ source }} success"
+                },
+                {
+                    "expr": "sum by (source) (rate(scrape_jobs_total{status=\"failure\"}[5m]))",
+                    "legendFormat": "{{ source }} fail"
+                }
+            ]
+        },
+        {
+            "title": "Listings Found (rate/5m)",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 4
+            },
+            "targets": [
+                {
+                    "expr": "sum by (source, city) (rate(listings_found_total[5m]))",
+                    "legendFormat": "{{ source }} / {{ city }}"
+                }
+            ]
+        },
+        {
+            "title": "Normalized vs Excluded (rate/5m)",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 12
+            },
+            "targets": [
+                {
+                    "expr": "sum by (source) (rate(listings_normalized_total[5m]))",
+                    "legendFormat": "normalized {{ source }}"
+                },
+                {
+                    "expr": "sum by (reason) (rate(listings_excluded_total[5m]))",
+                    "legendFormat": "excluded {{ reason }}"
+                }
+            ]
+        },
+        {
+            "title": "Telegram Delivery Latency",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 12
+            },
+            "targets": [
+                {
+                    "expr": "sum(rate(telegram_send_duration_seconds_sum[5m])) / sum(rate(telegram_send_duration_seconds_count[5m]))",
+                    "legendFormat": "avg latency"
+                },
+                {
+                    "expr": "histogram_quantile(0.95, sum by (le) (rate(telegram_send_duration_seconds_bucket[5m])))",
+                    "legendFormat": "p95 latency"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "s"
+                }
+            }
+        },
+        {
+            "title": "Outbox Delivery Attempts (rate/5m)",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 20
+            },
+            "targets": [
+                {
+                    "expr": "sum(rate(outbox_delivery_attempts_total{result=\"success\"}[5m]))",
+                    "legendFormat": "success"
+                },
+                {
+                    "expr": "sum(rate(outbox_delivery_attempts_total{result=\"failure\"}[5m]))",
+                    "legendFormat": "failure"
+                }
+            ]
+        },
+        {
+            "title": "Circuit Breakers",
+            "type": "table",
+            "gridPos": {
+                "h": 6,
+                "w": 12,
+                "x": 12,
+                "y": 20
+            },
+            "targets": [
+                {
+                    "expr": "max by (source) (circuit_breaker_state)",
+                    "legendFormat": "{{ source }}",
+                    "format": "table",
+                    "instant": true
+                }
+            ],
+            "fieldConfig": {
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value"
+                        },
+                        "properties": [
+                            {
+                                "id": "mappings",
+                                "value": [
+                                    {
+                                        "type": "value",
+                                        "options": {
+                                            "0": {
+                                                "text": "CLOSED",
+                                                "color": "green"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "type": "value",
+                                        "options": {
+                                            "1": {
+                                                "text": "HALF_OPEN",
+                                                "color": "yellow"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "type": "value",
+                                        "options": {
+                                            "2": {
+                                                "text": "OPEN",
+                                                "color": "red"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "title": "Publisher Rows Upserted (rate/5m)",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 6,
+                "w": 24,
+                "x": 0,
+                "y": 26
+            },
+            "targets": [
+                {
+                    "expr": "rate(publisher_rows_upserted_total[5m])",
+                    "legendFormat": "rows/s"
+                }
+            ]
+        }
+    ],
+    "schemaVersion": 39,
+    "tags": [
+        "agpars"
+    ],
+    "templating": {
+        "list": []
+    },
+    "time": {
+        "from": "now-6h",
+        "to": "now"
+    },
+    "title": "AGPARS Pipeline Overview",
+    "uid": "agpars-pipeline"
+}
